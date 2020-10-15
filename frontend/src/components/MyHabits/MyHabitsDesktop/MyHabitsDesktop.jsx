@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import Goals from "components/Goals";
 
 const GridContainer = styled.div`
   display: grid;
@@ -45,6 +46,7 @@ const MyHabitsDesktop = () => {
     <GridContainer>
       <NavContainer>
         <Title>Consistency</Title>
+        <Goals />
       </NavContainer>
       <MainContainer>
         <HeaderContainer>
