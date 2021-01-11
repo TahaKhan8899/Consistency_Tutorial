@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import { getGoals } from "./GoalsSlice";
 
 const GoalsContainer = styled.div`
   display: flex;
@@ -51,30 +53,41 @@ const Action = styled.div`
 `;
 
 const Goals = () => {
-  const AllGoals = [
-    { id: 0, name: "lose weight" },
-    { id: 1, name: "goal 1" },
-    { id: 2, name: "goal 2" },
-    { id: 3, name: "goal 3" },
-  ];
+  const dispatch = useDispatch();
+
+  const goalState = useSelector((state) => state.goals);
+  const { goalsList, loading, error } = goalState;
+
+  useEffect(() => {
+    dispatch(getGoals());
+  }, [dispatch]);
+
   return (
     <GoalsContainer>
-      <GoalsHeader>
-        <TitleSection>goals</TitleSection>
-        <AddGoalButton>
-          <img src="images/add.png" alt="add-goal-btn" />
-          add a goal
-        </AddGoalButton>
-      </GoalsHeader>
-      {AllGoals.map((goal, indx) => (
-        <GoalRow key={`goal-number-` + indx}>
-          <Name>{goal.name}</Name>
-          <Action>
-            <img src="images/edit.png" alt="edit-btn" />
-            <img src="images/delete.png" alt="delete-btn" />
-          </Action>
-        </GoalRow>
-      ))}
+      {error && <div>Error fetching goals</div>}
+      {loading === "pending" ? (
+        <div>Loading...</div>
+      ) : (
+        <>
+          <GoalsHeader>
+            <TitleSection>goals</TitleSection>
+            <AddGoalButton>
+              <img src="images/add.png" alt="add-goal-btn" />
+              add a goal
+            </AddGoalButton>
+          </GoalsHeader>
+          {goalsList &&
+            goalsList.map((goal, indx) => (
+              <GoalRow key={`goal-number-` + indx}>
+                <Name>{goal.name}</Name>
+                <Action>
+                  <img src="images/edit.png" alt="edit-btn" />
+                  <img src="images/delete.png" alt="delete-btn" />
+                </Action>
+              </GoalRow>
+            ))}
+        </>
+      )}
     </GoalsContainer>
   );
 };
