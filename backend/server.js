@@ -1,8 +1,13 @@
-import express from "express";
+import express, { response } from "express";
 
 const app = express();
 
 app.use(express.json());
+
+app.post("/user/register", (req, res) => {
+  const user = { name: "taha" };
+  res.send(user);
+});
 
 app.get("/goals", (req, res) => {
   try {
