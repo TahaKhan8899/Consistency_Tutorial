@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { registerUser } from "components/User/UserSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const PageContainer = styled.div`
   padding-top: 10px;
@@ -73,6 +73,10 @@ const StyledLink = styled(Link)`
   font-weight: bold;
 `;
 
+const ErrorSection = styled.div`
+  color: red;
+`;
+
 const Register = () => {
   const [userInfo, setUserInfo] = useState({
     firstName: "",
@@ -81,6 +85,10 @@ const Register = () => {
     password: "",
     passwordConfirmation: "",
   });
+
+  const userState = useSelector((state) => state.user);
+  const { error } = userState.registerState;
+  const { loggedInUser } = userState;
 
   const handleUserInfoChange = (e) => {
     const { id, value } = e.target;
@@ -96,6 +104,20 @@ const Register = () => {
     dispatch(registerUser(userInfo));
   };
 
+  const history = useHistory();
+
+  useEffect(() => {
+    if (loggedInUser) {
+      // redirect
+      history.push("/habits");
+    }
+  }, [loggedInUser, history]);
+
+  const findError = (sectionName) => {
+    const errorObj = error.find((err) => err.param === sectionName);
+    return errorObj ? errorObj.msg : null;
+  };
+
   return (
     <PageContainer>
       <PageTitle>Consistency</PageTitle>
@@ -104,49 +126,58 @@ const Register = () => {
         <FormContainer>
           <InputSection>
             <label htmlFor="firstName">First Name</label>
+            {error && <ErrorSection>{findError("firstName")}</ErrorSection>}
             <input
               type="text"
               id="firstName"
               placeholder="First Name"
-              maxLength="25"
+              maxLength="60"
               onChange={handleUserInfoChange}
             />
           </InputSection>
           <InputSection>
             <label htmlFor="lastName">Last Name</label>
+            {error && <ErrorSection>{findError("lastName")}</ErrorSection>}
             <input
               type="text"
               id="lastName"
               placeholder="Last Name"
-              maxLength="25"
+              maxLength="60"
               onChange={handleUserInfoChange}
             />
           </InputSection>
           <InputSection>
             <label htmlFor="email">Email</label>
+            {error && <ErrorSection>{findError("email")}</ErrorSection>}
             <input
               type="text"
               id="email"
               placeholder="Email"
-              maxLength="50"
+              maxLength="100"
               onChange={handleUserInfoChange}
             />
           </InputSection>
           <InputSection>
             <label htmlFor="password">Password</label>
+            {error && <ErrorSection>{findError("password")}</ErrorSection>}
             <input
               type="password"
               id="password"
               placeholder="Password"
+              maxLength="128"
               onChange={handleUserInfoChange}
             />
           </InputSection>
           <InputSection>
             <label htmlFor="passwordConfirmation">Confirm Password</label>
+            {error && (
+              <ErrorSection>{findError("passwordConfirmation")}</ErrorSection>
+            )}
             <input
               type="password"
               id="passwordConfirmation"
               placeholder="Confirm Password"
+              maxLength="128"
               onChange={handleUserInfoChange}
             />
           </InputSection>
