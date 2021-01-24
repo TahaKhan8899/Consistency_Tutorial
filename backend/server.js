@@ -1,13 +1,11 @@
 import express, { response } from "express";
+import userRoutes from "./routes/userRoutes";
 
 const app = express();
 
 app.use(express.json());
 
-app.post("/user/register", (req, res) => {
-  const user = { name: "taha" };
-  res.send(user);
-});
+app.use("/user", userRoutes);
 
 app.get("/goals", (req, res) => {
   try {
