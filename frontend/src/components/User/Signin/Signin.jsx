@@ -120,7 +120,7 @@ const Signin = () => {
       <PageTitle>Consistency</PageTitle>
       <SigninContainer>
         <FormTitle>Sign-in</FormTitle>
-        {error && <ErrorSection>{findError("registrationError")}</ErrorSection>}
+        {error && <ErrorSection>{findError("userNotFound")}</ErrorSection>}
         <FormContainer>
           <InputSection>
             <label htmlFor="email">Email</label>
