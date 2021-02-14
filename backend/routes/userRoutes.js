@@ -9,6 +9,11 @@ const saltRounds = 10;
 
 const userInfoValidation = (action) => {
   switch (action) {
+    case "signin":
+      return [
+        body("email", "Incorrect email").exists().isEmail(),
+        body("password", "Incorrect password").exists().isLength({ min: 5 }),
+      ];
     case "register":
       return [
         body("firstName", "First name field missing")
@@ -80,9 +85,41 @@ router.post("/register", userInfoValidation("register"), async (req, res) => {
   res.send(newUser);
 });
 
-router.post("/signin", (req, res) => {
-  const testUser = { name: "taha" };
-  res.send(testUser);
+router.post("/signin", userInfoValidation("signin"), async (req, res) => {
+  // input validation
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(401).send(errors.array());
+  }
+
+  // check if email exists in the DB
+  const { email, password } = req.body;
+  const queryForUser = {
+    text: "SELECT * FROM USERS WHERE email = $1",
+    values: [email],
+  };
+  const queryRes = await pool.query(queryForUser);
+  const listOfUsers = queryRes.rows;
+  if (listOfUsers.length === 0) {
+    return res
+      .status(401)
+      .send([{ param: "userNotFound", msg: "Incorrect email or password" }]);
+  }
+
+  // check if pw from DB matches entered password
+  const possibleUser = listOfUsers[0];
+  const checkPasswordMatch = await bcrypt.compare(
+    password,
+    possibleUser.passwordhash
+  );
+  if (!checkPasswordMatch) {
+    return res
+      .status(401)
+      .send([{ param: "userNotFound", msg: "Incorrect email or password" }]);
+  }
+  const { passwordhash, ...userWithoutPw } = possibleUser;
+  res.send(userWithoutPw);
 });
 
 export default router;
