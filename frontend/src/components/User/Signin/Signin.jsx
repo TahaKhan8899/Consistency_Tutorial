@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { signinUser } from "components/User/UserSlice";
+import { signinUser, resetSigninState } from "components/User/UserSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const PageContainer = styled.div`
@@ -115,6 +115,10 @@ const Signin = () => {
     return errorObj ? errorObj.msg : null;
   };
 
+  const handleResetState = () => {
+    dispatch(resetSigninState());
+  };
+
   return (
     <PageContainer>
       <PageTitle>Consistency</PageTitle>
@@ -152,7 +156,9 @@ const Signin = () => {
         </FormContainer>
         <div>
           Don't have an account?{" "}
-          <StyledLink to="/register">Register Here</StyledLink>
+          <StyledLink to="/register" onClick={handleResetState}>
+            Register Here
+          </StyledLink>
         </div>
       </SigninContainer>
     </PageContainer>
