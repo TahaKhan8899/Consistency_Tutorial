@@ -14,7 +14,7 @@ export const getAuthUser = (req, res, next) => {
       if (err) {
         return res
           .status(401)
-          .send({ param: "auth error", msg: "Invalid token" });
+          .send([{ param: "auth error", msg: "Invalid token" }]);
       }
       req.user = decode;
       next();
@@ -23,6 +23,6 @@ export const getAuthUser = (req, res, next) => {
   } else {
     return res
       .status(401)
-      .send({ param: "auth error", msg: "Token not found" });
+      .send([{ param: "auth error", msg: "Token not found" }]);
   }
 };

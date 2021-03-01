@@ -69,7 +69,7 @@ router.post("/register", userInfoValidation("register"), async (req, res) => {
 
   const createUserQuery = {
     text:
-      "INSERT INTO users(firstName, lastName, email, passwordHash) VALUES($1, $2, $3, $4) RETURNING firstName, lastName, email",
+      "INSERT INTO users(firstName, lastName, email, passwordHash) VALUES($1, $2, $3, $4) RETURNING id, firstName, lastName, email",
     values: [firstName, lastName, email, pwHash],
   };
 
