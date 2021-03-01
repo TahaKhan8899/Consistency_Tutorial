@@ -43,7 +43,7 @@ const goalsSlice = createSlice({
     [getGoals.rejected]: (state, action) => {
       if (state.loading === "pending") {
         state.loading = "idle";
-        state.error = action.error;
+        state.error = action.payload;
       }
     },
   },
