@@ -18,6 +18,56 @@ export const getGoals = createAsyncThunk(
   }
 );
 
+export const createGoal = createAsyncThunk(
+  "goals/create",
+  async (payload, thunkAPI) => {
+    try {
+      const { token, goalName, goalID } = payload;
+      if (!goalID) {
+        await Axios.post(
+          "/goals/create",
+          { goalName },
+          {
+            headers: { Authorization: "Bearer " + token },
+          }
+        );
+      } else {
+        await Axios.put(
+          "/goals/update/" + goalID,
+          { goalName },
+          {
+            headers: { Authorization: "Bearer " + token },
+          }
+        );
+      }
+      const { dispatch } = thunkAPI;
+      dispatch(getGoals(payload));
+      return;
+    } catch (error) {
+      const { rejectWithValue } = thunkAPI;
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const deleteGoal = createAsyncThunk(
+  "goals/delete",
+  async (payload, thunkAPI) => {
+    try {
+      const { token, goalID } = payload;
+      await Axios.delete("/goals/delete/" + goalID, {
+        headers: { Authorization: "Bearer " + token },
+      });
+      const { dispatch } = thunkAPI;
+      dispatch(getGoals(payload));
+      return;
+    } catch (error) {
+      const { rejectWithValue } = thunkAPI;
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initGoalsState = {
   goalsList: [],
   loading: "idle",
@@ -41,6 +91,28 @@ const goalsSlice = createSlice({
       }
     },
     [getGoals.rejected]: (state, action) => {
+      if (state.loading === "pending") {
+        state.loading = "idle";
+        state.error = action.payload;
+      }
+    },
+    [createGoal.pending]: (state) => {
+      if (state.loading === "idle") {
+        state.loading = "pending";
+      }
+    },
+    [createGoal.rejected]: (state, action) => {
+      if (state.loading === "pending") {
+        state.loading = "idle";
+        state.error = action.payload;
+      }
+    },
+    [deleteGoal.pending]: (state) => {
+      if (state.loading === "idle") {
+        state.loading = "pending";
+      }
+    },
+    [deleteGoal.rejected]: (state, action) => {
       if (state.loading === "pending") {
         state.loading = "idle";
         state.error = action.payload;

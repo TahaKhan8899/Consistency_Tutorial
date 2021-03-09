@@ -4,7 +4,7 @@ import { Modal } from "react-responsive-modal";
 import { useDispatch, useSelector } from "react-redux";
 import { createGoal } from "components/Goals/GoalsSlice";
 
-const InnerAddGoalButton = styled.div`
+const InnerUpdateGoalButton = styled.div`
   text-transform: uppercase;
   display: flex;
   align-items: center;
@@ -68,7 +68,7 @@ const SubmitButton = styled.div`
   }
 `;
 
-const AddGoalButton = () => {
+const UpdateGoalButton = ({ goalID }) => {
   const [showModal, setShowModal] = useState(false);
   const [showError, setShowError] = useState(false);
   const [goalName, setGoalName] = useState("");
@@ -90,19 +90,18 @@ const AddGoalButton = () => {
       return;
     }
     // dispatch create goal action
-    const payload = { token: loggedInUser.token, goalName };
+    const payload = { token: loggedInUser.token, goalName, goalID };
     dispatch(createGoal(payload));
   };
 
   return (
     <>
-      <InnerAddGoalButton onClick={openModal}>
-        <img src="images/add.png" alt="add-goal-btn" />
-        add a goal
-      </InnerAddGoalButton>
+      <InnerUpdateGoalButton onClick={openModal}>
+        <img src="images/edit.png" alt="add-goal-btn" />
+      </InnerUpdateGoalButton>
       <Modal open={showModal} onClose={closeModal} center>
         <ModalContentContainer>
-          <ModalTitle>Create a New Goal</ModalTitle>
+          <ModalTitle>Update Goal</ModalTitle>
           <InputSection>
             <label htmlFor="createGoal">Enter a goal name</label>
             {showError && <ErrorSection>Enter a goal name</ErrorSection>}
@@ -116,7 +115,7 @@ const AddGoalButton = () => {
           </InputSection>
           <ButtonContainer>
             <SubmitButton type="submit" onClick={handleSubmit}>
-              Create Goal
+              Update Goal
             </SubmitButton>
           </ButtonContainer>
         </ModalContentContainer>
@@ -125,4 +124,4 @@ const AddGoalButton = () => {
   );
 };
 
-export default AddGoalButton;
+export default UpdateGoalButton;
