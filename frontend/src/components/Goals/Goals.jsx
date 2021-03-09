@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getGoals } from "./GoalsSlice";
 import { logoutUser } from "components/User/UserSlice";
 import AddGoalButton from "./AddGoalButton";
+import UpdateGoalButton from "./UpdateGoalButton";
+import DeleteGoalButton from "./DeleteGoalButton";
 
 const GoalsContainer = styled.div`
   display: flex;
@@ -39,9 +41,6 @@ const Action = styled.div`
   img {
     max-width: 20px;
     margin-right: 8px;
-    :last-child {
-      margin: 0;
-    }
   }
 `;
 
@@ -80,15 +79,18 @@ const Goals = () => {
             <AddGoalButton />
           </GoalsHeader>
           {goalsList &&
-            goalsList.map((goal) => (
-              <GoalRow key={`goal-number-` + goal.id}>
-                <Name>{goal.name}</Name>
-                <Action>
-                  <img src="images/edit.png" alt="edit-btn" />
-                  <img src="images/delete.png" alt="delete-btn" />
-                </Action>
-              </GoalRow>
-            ))}
+            goalsList
+              .slice()
+              .sort((a, b) => a.id - b.id)
+              .map((goal) => (
+                <GoalRow key={`goal-number-` + goal.id}>
+                  <Name>{goal.name}</Name>
+                  <Action>
+                    <UpdateGoalButton goalID={goal.id} />
+                    <DeleteGoalButton goalID={goal.id} goalName={goal.name} />
+                  </Action>
+                </GoalRow>
+              ))}
         </>
       )}
     </GoalsContainer>
